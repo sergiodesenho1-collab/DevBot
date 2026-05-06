@@ -4,32 +4,30 @@ const initialTextareaHeight = textarea.scrollHeight;
 
 //Botão para abrir o chat
 async function createBotReplay(content) {
-  const API_URL = "https://api.openai.com/v1/chat/completions";
-  const API_KEY = "sua chave";
+  const response = await fetch(
+    "http://localhost:3000/chat",
 
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      Authorization: `Bearer ${API_KEY}`,
+    {
+      method: "POST",
+      headers: {
+        "content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: content,
+      }),
     },
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "user",
-          content,
-        },
-      ],
-    }),
-  });
+  );
 
   const data = await response.json();
 
-  return data.choices[0].message.content;
+  if (response.ok) {
+    return data.reply;
+  } else {
+    throw new Error(data.error || "Error ao obter resposta");
+  }
 }
 
-//função para criar um elemento de mensagem no chat
+//Função para criar um elemento de mensagem no chat
 function createChatMessage(message, type) {
   const li = document.createElement("li");
   li.classList.add("message", type);
@@ -48,7 +46,7 @@ function createChatMessage(message, type) {
   return li;
 }
 
-// função para lidar com envir da mensagem do uúario e respossta do bot
+// Função para lidar com o envir da mensagem do usúario e a resposta do bot
 
 function handleClosechat() {
   document.body.classList.remove("open-chat");
@@ -58,21 +56,21 @@ function handleToggleChat() {
   document.body.classList.toggle("open-chat");
 }
 
-// função que controla o Enter para enviar mensagem
-function handleChatonKeyDown(event) {
+//Função que controla o Enter para enviar mensagem
+function handleChatOnKeyDown(event) {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
     handleChat();
   }
 }
 
-// função para lidar com redimensionamento automatico do testarea
+//função para lidar com o redimensionamento automatico do textarea
 function handleAutoSize() {
   textarea.style.height = `${initialTextareaHeight}px`;
   textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
-//adicionando os events listeners aos elementos
+// adicionando os events listeners aos elementos
 async function handleChat() {
   const textareaValue = textarea.value.trim();
 
@@ -102,7 +100,7 @@ async function handleChat() {
     messageHistory.scrollTo(0, messageHistory.scrollHeight);
   } catch (error) {
     botMessage.querySelector("p").textContent =
-      "Ops! Algo deu errado. Por favor tente novamente.";
+      "ops! Algo deu errado. Por favor tente novamente.";
     botMessage.querySelector("p").classList.add("error");
   }
 }
