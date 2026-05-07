@@ -48,7 +48,7 @@ function createChatMessage(message, type) {
 
 // Função para lidar com o envir da mensagem do usúario e a resposta do bot
 
-function handleClosechat() {
+function handleCloseChat() {
   document.body.classList.remove("open-chat");
 }
 
@@ -97,10 +97,11 @@ async function handleChat() {
     const botReplay = await createBotReplay(textareaValue);
 
     botMessage.querySelector("p").textContent = botReplay;
-    messageHistory.scrollTo(0, messageHistory.scrollHeight);
+    main.scrollTo(0, main.scrollHeight);
   } catch (error) {
     botMessage.querySelector("p").textContent =
       "ops! Algo deu errado. Por favor tente novamente.";
     botMessage.querySelector("p").classList.add("error");
+    main.scrollTo(0, main.scrollHeight);
   }
 }
